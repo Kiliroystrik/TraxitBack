@@ -1,0 +1,257 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DoctrineMigrations;
+
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+final class Version20240603075836 extends AbstractMigration
+{
+    public function getDescription(): string
+    {
+        return '';
+    }
+
+    public function up(Schema $schema): void
+    {
+        // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE SEQUENCE address_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE brand_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE client_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE company_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE driver_assignment_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE driving_segment_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE fuel_type_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE "order_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE order_step_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE product_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE service_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE service_type_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE status_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE tour_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE tour_step_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE tour_type_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE unit_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE vehicle_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE vehicle_assignment_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE vehicle_model_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE TABLE address (id INT NOT NULL, company_id INT NOT NULL, street VARCHAR(255) NOT NULL, city VARCHAR(100) NOT NULL, zip_code VARCHAR(20) NOT NULL, state_province VARCHAR(100) NOT NULL, country VARCHAR(100) NOT NULL, latitude NUMERIC(9, 6) DEFAULT NULL, longitude NUMERIC(9, 6) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_D4E6F81979B1AD6 ON address (company_id)');
+        $this->addSql('CREATE TABLE brand (id INT NOT NULL, company_id INT NOT NULL, name VARCHAR(100) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_1C52F958979B1AD6 ON brand (company_id)');
+        $this->addSql('CREATE TABLE client (id INT NOT NULL, company_id INT NOT NULL, address_id INT DEFAULT NULL, name VARCHAR(100) NOT NULL, email VARCHAR(255) DEFAULT NULL, phone VARCHAR(20) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_C7440455979B1AD6 ON client (company_id)');
+        $this->addSql('CREATE INDEX IDX_C7440455F5B7AF75 ON client (address_id)');
+        $this->addSql('COMMENT ON COLUMN client.created_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN client.updated_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE company (id INT NOT NULL, name VARCHAR(100) NOT NULL, email VARCHAR(255) DEFAULT NULL, phone VARCHAR(20) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('COMMENT ON COLUMN company.created_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN company.updated_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE driver (id INT NOT NULL, licence_number VARCHAR(50) DEFAULT NULL, licence_expiration TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, is_available BOOLEAN NOT NULL, card VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('COMMENT ON COLUMN driver.licence_expiration IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE driver_tour_type (driver_id INT NOT NULL, tour_type_id INT NOT NULL, PRIMARY KEY(driver_id, tour_type_id))');
+        $this->addSql('CREATE INDEX IDX_82CCBC10C3423909 ON driver_tour_type (driver_id)');
+        $this->addSql('CREATE INDEX IDX_82CCBC1085A60912 ON driver_tour_type (tour_type_id)');
+        $this->addSql('CREATE TABLE driver_assignment (id INT NOT NULL, tour_id INT NOT NULL, driver_id INT NOT NULL, role JSON DEFAULT NULL, start_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, end_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_5481CE7115ED8D43 ON driver_assignment (tour_id)');
+        $this->addSql('CREATE INDEX IDX_5481CE71C3423909 ON driver_assignment (driver_id)');
+        $this->addSql('COMMENT ON COLUMN driver_assignment.start_date IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN driver_assignment.end_date IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE driving_segment (id INT NOT NULL, driver_assignment_id INT NOT NULL, vehicle_assignment_id INT NOT NULL, start_date TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, end_date TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_83DF1B4FFCB48E75 ON driving_segment (driver_assignment_id)');
+        $this->addSql('CREATE INDEX IDX_83DF1B4F86425F32 ON driving_segment (vehicle_assignment_id)');
+        $this->addSql('COMMENT ON COLUMN driving_segment.start_date IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN driving_segment.end_date IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE fuel_type (id INT NOT NULL, name VARCHAR(100) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE "order" (id INT NOT NULL, company_id INT NOT NULL, client_id INT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_F5299398979B1AD6 ON "order" (company_id)');
+        $this->addSql('CREATE INDEX IDX_F529939819EB6921 ON "order" (client_id)');
+        $this->addSql('COMMENT ON COLUMN "order".created_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN "order".updated_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE order_step (id INT NOT NULL, address_id INT NOT NULL, _order_id INT NOT NULL, tour_step_id INT DEFAULT NULL, status_id INT NOT NULL, product_id INT NOT NULL, unit_id INT NOT NULL, type VARCHAR(50) NOT NULL, description TEXT DEFAULT NULL, quantity NUMERIC(10, 2) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, scheduled_arrival TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, scheduled_departure TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_E48C42BF5B7AF75 ON order_step (address_id)');
+        $this->addSql('CREATE INDEX IDX_E48C42BA35F2858 ON order_step (_order_id)');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_E48C42B33589B1D ON order_step (tour_step_id)');
+        $this->addSql('CREATE INDEX IDX_E48C42B6BF700BD ON order_step (status_id)');
+        $this->addSql('CREATE INDEX IDX_E48C42B4584665A ON order_step (product_id)');
+        $this->addSql('CREATE INDEX IDX_E48C42BF8BD700D ON order_step (unit_id)');
+        $this->addSql('COMMENT ON COLUMN order_step.created_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN order_step.updated_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN order_step.scheduled_arrival IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN order_step.scheduled_departure IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE product (id INT NOT NULL, name VARCHAR(100) NOT NULL, description TEXT DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE product_tour_type (product_id INT NOT NULL, tour_type_id INT NOT NULL, PRIMARY KEY(product_id, tour_type_id))');
+        $this->addSql('CREATE INDEX IDX_C34E01844584665A ON product_tour_type (product_id)');
+        $this->addSql('CREATE INDEX IDX_C34E018485A60912 ON product_tour_type (tour_type_id)');
+        $this->addSql('CREATE TABLE service (id INT NOT NULL, vehicle_id INT NOT NULL, service_type_id INT NOT NULL, date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, is_completed BOOLEAN NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_E19D9AD2545317D1 ON service (vehicle_id)');
+        $this->addSql('CREATE INDEX IDX_E19D9AD2AC8DE0F ON service (service_type_id)');
+        $this->addSql('COMMENT ON COLUMN service.date IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE service_type (id INT NOT NULL, company_id INT NOT NULL, name VARCHAR(100) NOT NULL, description TEXT DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_429DE3C5979B1AD6 ON service_type (company_id)');
+        $this->addSql('CREATE TABLE status (id INT NOT NULL, company_id INT NOT NULL, name VARCHAR(50) NOT NULL, description TEXT DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_7B00651C979B1AD6 ON status (company_id)');
+        $this->addSql('CREATE TABLE tour (id INT NOT NULL, company_id INT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, start_date TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, end_date TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_6AD1F969979B1AD6 ON tour (company_id)');
+        $this->addSql('COMMENT ON COLUMN tour.created_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN tour.updated_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN tour.start_date IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN tour.end_date IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE tour_step (id INT NOT NULL, tour_id INT NOT NULL, actual_date TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, actual_arrival TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, actual_departure TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, step_number INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_62891E1C15ED8D43 ON tour_step (tour_id)');
+        $this->addSql('COMMENT ON COLUMN tour_step.actual_date IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN tour_step.created_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN tour_step.updated_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN tour_step.actual_arrival IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN tour_step.actual_departure IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE tour_type (id INT NOT NULL, name VARCHAR(100) NOT NULL, description TEXT DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE unit (id INT NOT NULL, name VARCHAR(20) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE "user" (id INT NOT NULL, company_id INT NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, firstname VARCHAR(100) NOT NULL, lastname VARCHAR(100) NOT NULL, type VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_8D93D649979B1AD6 ON "user" (company_id)');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL ON "user" (email)');
+        $this->addSql('COMMENT ON COLUMN "user".created_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN "user".updated_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE vehicle (id INT NOT NULL, company_id INT NOT NULL, model_id INT NOT NULL, registration_number VARCHAR(50) NOT NULL, mileage NUMERIC(10, 2) NOT NULL, is_available BOOLEAN NOT NULL, registered_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_1B80E486979B1AD6 ON vehicle (company_id)');
+        $this->addSql('CREATE INDEX IDX_1B80E4867975B7E7 ON vehicle (model_id)');
+        $this->addSql('COMMENT ON COLUMN vehicle.registered_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE vehicle_fuel_type (vehicle_id INT NOT NULL, fuel_type_id INT NOT NULL, PRIMARY KEY(vehicle_id, fuel_type_id))');
+        $this->addSql('CREATE INDEX IDX_6B1E4A6A545317D1 ON vehicle_fuel_type (vehicle_id)');
+        $this->addSql('CREATE INDEX IDX_6B1E4A6A6A70FE35 ON vehicle_fuel_type (fuel_type_id)');
+        $this->addSql('CREATE TABLE vehicle_assignment (id INT NOT NULL, tour_id INT NOT NULL, vehicle_id INT NOT NULL, start_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, end_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_B557CB2715ED8D43 ON vehicle_assignment (tour_id)');
+        $this->addSql('CREATE INDEX IDX_B557CB27545317D1 ON vehicle_assignment (vehicle_id)');
+        $this->addSql('COMMENT ON COLUMN vehicle_assignment.start_date IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN vehicle_assignment.end_date IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE vehicle_model (id INT NOT NULL, brand_id INT NOT NULL, name VARCHAR(100) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_B53AF23544F5D008 ON vehicle_model (brand_id)');
+        $this->addSql('ALTER TABLE address ADD CONSTRAINT FK_D4E6F81979B1AD6 FOREIGN KEY (company_id) REFERENCES company (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE brand ADD CONSTRAINT FK_1C52F958979B1AD6 FOREIGN KEY (company_id) REFERENCES company (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE client ADD CONSTRAINT FK_C7440455979B1AD6 FOREIGN KEY (company_id) REFERENCES company (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE client ADD CONSTRAINT FK_C7440455F5B7AF75 FOREIGN KEY (address_id) REFERENCES address (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE driver ADD CONSTRAINT FK_11667CD9BF396750 FOREIGN KEY (id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE driver_tour_type ADD CONSTRAINT FK_82CCBC10C3423909 FOREIGN KEY (driver_id) REFERENCES driver (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE driver_tour_type ADD CONSTRAINT FK_82CCBC1085A60912 FOREIGN KEY (tour_type_id) REFERENCES tour_type (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE driver_assignment ADD CONSTRAINT FK_5481CE7115ED8D43 FOREIGN KEY (tour_id) REFERENCES tour (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE driver_assignment ADD CONSTRAINT FK_5481CE71C3423909 FOREIGN KEY (driver_id) REFERENCES driver (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE driving_segment ADD CONSTRAINT FK_83DF1B4FFCB48E75 FOREIGN KEY (driver_assignment_id) REFERENCES driver_assignment (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE driving_segment ADD CONSTRAINT FK_83DF1B4F86425F32 FOREIGN KEY (vehicle_assignment_id) REFERENCES vehicle_assignment (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE "order" ADD CONSTRAINT FK_F5299398979B1AD6 FOREIGN KEY (company_id) REFERENCES company (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE "order" ADD CONSTRAINT FK_F529939819EB6921 FOREIGN KEY (client_id) REFERENCES client (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE order_step ADD CONSTRAINT FK_E48C42BF5B7AF75 FOREIGN KEY (address_id) REFERENCES address (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE order_step ADD CONSTRAINT FK_E48C42BA35F2858 FOREIGN KEY (_order_id) REFERENCES "order" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE order_step ADD CONSTRAINT FK_E48C42B33589B1D FOREIGN KEY (tour_step_id) REFERENCES tour_step (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE order_step ADD CONSTRAINT FK_E48C42B6BF700BD FOREIGN KEY (status_id) REFERENCES status (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE order_step ADD CONSTRAINT FK_E48C42B4584665A FOREIGN KEY (product_id) REFERENCES product (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE order_step ADD CONSTRAINT FK_E48C42BF8BD700D FOREIGN KEY (unit_id) REFERENCES unit (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE product_tour_type ADD CONSTRAINT FK_C34E01844584665A FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE product_tour_type ADD CONSTRAINT FK_C34E018485A60912 FOREIGN KEY (tour_type_id) REFERENCES tour_type (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE service ADD CONSTRAINT FK_E19D9AD2545317D1 FOREIGN KEY (vehicle_id) REFERENCES vehicle (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE service ADD CONSTRAINT FK_E19D9AD2AC8DE0F FOREIGN KEY (service_type_id) REFERENCES service_type (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE service_type ADD CONSTRAINT FK_429DE3C5979B1AD6 FOREIGN KEY (company_id) REFERENCES company (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE status ADD CONSTRAINT FK_7B00651C979B1AD6 FOREIGN KEY (company_id) REFERENCES company (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE tour ADD CONSTRAINT FK_6AD1F969979B1AD6 FOREIGN KEY (company_id) REFERENCES company (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE tour_step ADD CONSTRAINT FK_62891E1C15ED8D43 FOREIGN KEY (tour_id) REFERENCES tour (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE "user" ADD CONSTRAINT FK_8D93D649979B1AD6 FOREIGN KEY (company_id) REFERENCES company (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE vehicle ADD CONSTRAINT FK_1B80E486979B1AD6 FOREIGN KEY (company_id) REFERENCES company (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE vehicle ADD CONSTRAINT FK_1B80E4867975B7E7 FOREIGN KEY (model_id) REFERENCES vehicle_model (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE vehicle_fuel_type ADD CONSTRAINT FK_6B1E4A6A545317D1 FOREIGN KEY (vehicle_id) REFERENCES vehicle (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE vehicle_fuel_type ADD CONSTRAINT FK_6B1E4A6A6A70FE35 FOREIGN KEY (fuel_type_id) REFERENCES fuel_type (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE vehicle_assignment ADD CONSTRAINT FK_B557CB2715ED8D43 FOREIGN KEY (tour_id) REFERENCES tour (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE vehicle_assignment ADD CONSTRAINT FK_B557CB27545317D1 FOREIGN KEY (vehicle_id) REFERENCES vehicle (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE vehicle_model ADD CONSTRAINT FK_B53AF23544F5D008 FOREIGN KEY (brand_id) REFERENCES brand (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+    }
+
+    public function down(Schema $schema): void
+    {
+        // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE SCHEMA public');
+        $this->addSql('DROP SEQUENCE address_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE brand_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE client_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE company_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE driver_assignment_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE driving_segment_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE fuel_type_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE "order_id_seq" CASCADE');
+        $this->addSql('DROP SEQUENCE order_step_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE product_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE service_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE service_type_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE status_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE tour_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE tour_step_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE tour_type_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE unit_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
+        $this->addSql('DROP SEQUENCE vehicle_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE vehicle_assignment_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE vehicle_model_id_seq CASCADE');
+        $this->addSql('ALTER TABLE address DROP CONSTRAINT FK_D4E6F81979B1AD6');
+        $this->addSql('ALTER TABLE brand DROP CONSTRAINT FK_1C52F958979B1AD6');
+        $this->addSql('ALTER TABLE client DROP CONSTRAINT FK_C7440455979B1AD6');
+        $this->addSql('ALTER TABLE client DROP CONSTRAINT FK_C7440455F5B7AF75');
+        $this->addSql('ALTER TABLE driver DROP CONSTRAINT FK_11667CD9BF396750');
+        $this->addSql('ALTER TABLE driver_tour_type DROP CONSTRAINT FK_82CCBC10C3423909');
+        $this->addSql('ALTER TABLE driver_tour_type DROP CONSTRAINT FK_82CCBC1085A60912');
+        $this->addSql('ALTER TABLE driver_assignment DROP CONSTRAINT FK_5481CE7115ED8D43');
+        $this->addSql('ALTER TABLE driver_assignment DROP CONSTRAINT FK_5481CE71C3423909');
+        $this->addSql('ALTER TABLE driving_segment DROP CONSTRAINT FK_83DF1B4FFCB48E75');
+        $this->addSql('ALTER TABLE driving_segment DROP CONSTRAINT FK_83DF1B4F86425F32');
+        $this->addSql('ALTER TABLE "order" DROP CONSTRAINT FK_F5299398979B1AD6');
+        $this->addSql('ALTER TABLE "order" DROP CONSTRAINT FK_F529939819EB6921');
+        $this->addSql('ALTER TABLE order_step DROP CONSTRAINT FK_E48C42BF5B7AF75');
+        $this->addSql('ALTER TABLE order_step DROP CONSTRAINT FK_E48C42BA35F2858');
+        $this->addSql('ALTER TABLE order_step DROP CONSTRAINT FK_E48C42B33589B1D');
+        $this->addSql('ALTER TABLE order_step DROP CONSTRAINT FK_E48C42B6BF700BD');
+        $this->addSql('ALTER TABLE order_step DROP CONSTRAINT FK_E48C42B4584665A');
+        $this->addSql('ALTER TABLE order_step DROP CONSTRAINT FK_E48C42BF8BD700D');
+        $this->addSql('ALTER TABLE product_tour_type DROP CONSTRAINT FK_C34E01844584665A');
+        $this->addSql('ALTER TABLE product_tour_type DROP CONSTRAINT FK_C34E018485A60912');
+        $this->addSql('ALTER TABLE service DROP CONSTRAINT FK_E19D9AD2545317D1');
+        $this->addSql('ALTER TABLE service DROP CONSTRAINT FK_E19D9AD2AC8DE0F');
+        $this->addSql('ALTER TABLE service_type DROP CONSTRAINT FK_429DE3C5979B1AD6');
+        $this->addSql('ALTER TABLE status DROP CONSTRAINT FK_7B00651C979B1AD6');
+        $this->addSql('ALTER TABLE tour DROP CONSTRAINT FK_6AD1F969979B1AD6');
+        $this->addSql('ALTER TABLE tour_step DROP CONSTRAINT FK_62891E1C15ED8D43');
+        $this->addSql('ALTER TABLE "user" DROP CONSTRAINT FK_8D93D649979B1AD6');
+        $this->addSql('ALTER TABLE vehicle DROP CONSTRAINT FK_1B80E486979B1AD6');
+        $this->addSql('ALTER TABLE vehicle DROP CONSTRAINT FK_1B80E4867975B7E7');
+        $this->addSql('ALTER TABLE vehicle_fuel_type DROP CONSTRAINT FK_6B1E4A6A545317D1');
+        $this->addSql('ALTER TABLE vehicle_fuel_type DROP CONSTRAINT FK_6B1E4A6A6A70FE35');
+        $this->addSql('ALTER TABLE vehicle_assignment DROP CONSTRAINT FK_B557CB2715ED8D43');
+        $this->addSql('ALTER TABLE vehicle_assignment DROP CONSTRAINT FK_B557CB27545317D1');
+        $this->addSql('ALTER TABLE vehicle_model DROP CONSTRAINT FK_B53AF23544F5D008');
+        $this->addSql('DROP TABLE address');
+        $this->addSql('DROP TABLE brand');
+        $this->addSql('DROP TABLE client');
+        $this->addSql('DROP TABLE company');
+        $this->addSql('DROP TABLE driver');
+        $this->addSql('DROP TABLE driver_tour_type');
+        $this->addSql('DROP TABLE driver_assignment');
+        $this->addSql('DROP TABLE driving_segment');
+        $this->addSql('DROP TABLE fuel_type');
+        $this->addSql('DROP TABLE "order"');
+        $this->addSql('DROP TABLE order_step');
+        $this->addSql('DROP TABLE product');
+        $this->addSql('DROP TABLE product_tour_type');
+        $this->addSql('DROP TABLE service');
+        $this->addSql('DROP TABLE service_type');
+        $this->addSql('DROP TABLE status');
+        $this->addSql('DROP TABLE tour');
+        $this->addSql('DROP TABLE tour_step');
+        $this->addSql('DROP TABLE tour_type');
+        $this->addSql('DROP TABLE unit');
+        $this->addSql('DROP TABLE "user"');
+        $this->addSql('DROP TABLE vehicle');
+        $this->addSql('DROP TABLE vehicle_fuel_type');
+        $this->addSql('DROP TABLE vehicle_assignment');
+        $this->addSql('DROP TABLE vehicle_model');
+    }
+}
