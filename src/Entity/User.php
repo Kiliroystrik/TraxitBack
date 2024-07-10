@@ -3,12 +3,46 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Put;
+use App\Dto\UserMe;
 use App\Repository\UserRepository;
+use App\State\UserProvider;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(
+            name: 'me',
+            uriTemplate: '/users/me',
+            provider: UserProvider::class,
+            output: UserMe::class,
+        ),
+        new Get(
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['user:read']],
+            denormalizationContext: ['groups' => ['user:read']],
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['user:read']],
+            denormalizationContext: ['groups' => ['user:read']],
+        ),
+        new Patch(
+            normalizationContext: ['groups' => ['user:update']],
+            denormalizationContext: ['groups' => ['user:update']],
+        ),
+        new Put(
+            normalizationContext: ['groups' => ['user:update']],
+            denormalizationContext: ['groups' => ['user:update']],
+        ),
+        new Delete(),
+    ]
+)]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\InheritanceType('JOINED')]
@@ -19,39 +53,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column, Groups(['user:read', 'user:me'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180)]
+    #[ORM\Column(length: 180), Groups(['user:read', 'user:create', 'user:update', 'user:me'])]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
-    #[ORM\Column]
+    #[ORM\Column, Groups(['user:read', 'user:create', 'user:update', 'user:me'])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
-    #[ORM\Column]
+    #[ORM\Column, Groups(['user:read', 'user:create', 'user:update'])]
     private ?string $password = null;
 
-    #[ORM\Column]
+    #[ORM\Column, Groups(['user:read', 'user:create', 'user:update'])]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true), Groups(['user:read', 'user:create', 'user:update'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100), Groups(['user:read', 'user:create', 'user:update', 'user:me'])]
     private ?string $firstname = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100), Groups(['user:read', 'user:create', 'user:update', 'user:me'])]
     private ?string $lastname = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false), Groups(['user:read', 'user:create', 'user:update'])]
     private ?Company $company = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
