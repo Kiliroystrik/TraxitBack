@@ -11,6 +11,8 @@ use App\Factory\FuelTypeFactory;
 use App\Factory\OrderFactory;
 use App\Factory\OrderStepFactory;
 use App\Factory\StatusFactory;
+use App\Factory\TourFactory;
+use App\Factory\TourStepFactory;
 use App\Factory\UserFactory;
 use App\Factory\VehicleFactory;
 use App\Factory\VehicleModelFactory;
@@ -137,6 +139,24 @@ class AppFixtures extends Fixture
         ]);
 
         // On crée des détails de commandes
-        OrderStepFactory::createMany(50);
+        $orderSteps = OrderStepFactory::createMany(50);
+
+        $tours = TourFactory::createMany(50, [
+            'company' => $company,
+        ]);
+
+        // On crée des steps de tour
+        // Création des steps pour chaque tour
+        foreach ($tours as $tour) {
+            // Créer 10 steps pour chaque tour avec un stepNumber incrémenté
+            for ($i = 0; $i < 10; $i++) {
+                TourStepFactory::createOne([
+                    'tour' => $tour,
+                    'stepNumber' => $i, // Incrémente après avoir utilisé la valeur
+                    'tour' => $tour,
+                    'orderStep' => $orderSteps[array_rand($orderSteps)],
+                ]);
+            }
+        }
     }
 }

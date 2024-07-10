@@ -8,7 +8,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['order:read', 'company:read', 'client:read']],
+    denormalizationContext: ['groups' => ['order:write', 'company:read', 'client:read']],
+)]
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
 class Order
@@ -16,31 +19,39 @@ class Order
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['order:read', 'order:write', 'company:read', 'client:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['order:read', 'order:write', 'company:read', 'client:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['order:read', 'order:write', 'company:read', 'client:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order:read', 'order:write'])]
     private ?Company $company = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order:read', 'order:write'])]
     private ?Client $client = null;
 
     /**
      * @var Collection<int, OrderStep>
      */
     #[ORM\OneToMany(targetEntity: OrderStep::class, mappedBy: '_order', orphanRemoval: true)]
+    #[Groups(['order:read', 'order:write', 'company:read', 'client:read'])]
     private Collection $orderSteps;
 
     public function __construct()
     {
         $this->orderSteps = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int

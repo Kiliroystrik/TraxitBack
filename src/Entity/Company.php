@@ -3,87 +3,137 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Controller\CompanyController;
+use App\Dto\CompanyCreation;
 use App\Repository\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(
+            normalizationContext: ['groups' => ['company:read']],
+            denormalizationContext: ['groups' => ['company:read']],
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['company:read']],
+            denormalizationContext: ['groups' => ['company:read']],
+        ),
+        new Post(
+            processor: CompanyController::class,
+            input: CompanyCreation::class,
+            output: CompanyCreation::class,
+        ),
+        new Patch(
+            normalizationContext: ['groups' => ['company:update']],
+            denormalizationContext: ['groups' => ['company:update']],
+        ),
+        new Put(
+            normalizationContext: ['groups' => ['company:update']],
+            denormalizationContext: ['groups' => ['company:update']],
+        ),
+        new Delete(),
+
+    ]
+)]
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 class Company
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['company:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['company:read', 'company:create', 'company:update'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['company:read', 'company:create', 'company:update'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 20, nullable: true)]
+    #[Groups(['company:read', 'company:create', 'company:update'])]
     private ?string $phone = null;
 
     #[ORM\Column]
+    #[Groups(['company:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['company:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     /**
      * @var Collection<int, User>
      */
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'company', orphanRemoval: true)]
+    // #[Groups(['company:read'])]
     private Collection $users;
 
     /**
      * @var Collection<int, Tour>
      */
     #[ORM\OneToMany(targetEntity: Tour::class, mappedBy: 'company', orphanRemoval: true)]
+    // #[Groups(['company:read'])]
     private Collection $tours;
 
     /**
      * @var Collection<int, Vehicle>
      */
     #[ORM\OneToMany(targetEntity: Vehicle::class, mappedBy: 'company', orphanRemoval: true)]
+    // #[Groups(['company:read'])]
     private Collection $vehicles;
 
     /**
      * @var Collection<int, Brand>
      */
     #[ORM\OneToMany(targetEntity: Brand::class, mappedBy: 'company', orphanRemoval: true)]
+    // #[Groups(['company:read'])]
     private Collection $brands;
 
     /**
      * @var Collection<int, Order>
      */
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'company', orphanRemoval: true)]
+    // #[Groups(['company:read'])]
     private Collection $orders;
 
     /**
      * @var Collection<int, Status>
      */
     #[ORM\OneToMany(targetEntity: Status::class, mappedBy: 'company', orphanRemoval: true)]
+    // #[Groups(['company:read'])]
     private Collection $statuses;
 
     /**
      * @var Collection<int, Client>
      */
     #[ORM\OneToMany(targetEntity: Client::class, mappedBy: 'company', orphanRemoval: true)]
+    // #[Groups(['company:read'])]
     private Collection $clients;
 
     /**
      * @var Collection<int, Address>
      */
     #[ORM\OneToMany(targetEntity: Address::class, mappedBy: 'company', orphanRemoval: true)]
+    // #[Groups(['company:read'])]
     private Collection $addresses;
 
     /**
      * @var Collection<int, ServiceType>
      */
     #[ORM\OneToMany(targetEntity: ServiceType::class, mappedBy: 'company', orphanRemoval: true)]
+    #[Groups(['company:read'])]
     private Collection $serviceTypes;
 
     public function __construct()
@@ -97,6 +147,9 @@ class Company
         $this->clients = new ArrayCollection();
         $this->addresses = new ArrayCollection();
         $this->serviceTypes = new ArrayCollection();
+
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
