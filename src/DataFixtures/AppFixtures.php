@@ -30,6 +30,8 @@ class AppFixtures extends Fixture
         $user = UserFactory::createOne(
             [
                 'company' => $company,
+                'roles' => ['ROLE_ADMIN'],
+                'email' => 'borges.mathieu@gmail.com',
             ]
         );
 
@@ -100,10 +102,17 @@ class AppFixtures extends Fixture
             'company' => $company,
         ]);
 
-        // On créer des clients
-        ClientFactory::createMany(50, [
-            'company' => $company,
-        ]);
+        // On crée 50 clients
+        $clients = [];
+        for ($i = 0; $i < 50; $i++) {
+            $client = ClientFactory::createOne(
+                [
+                    'company' => $company,
+                    'address' => $address,
+                ]
+            );
+            $clients[] = $client;
+        }
 
         // On crée des conducteurs
         DriverFactory::createMany(50, [
@@ -136,6 +145,7 @@ class AppFixtures extends Fixture
         // On crée des commandes
         OrderFactory::createMany(50, [
             'company' => $company,
+            'client' => $clients[array_rand($clients)],
         ]);
 
         // On crée des détails de commandes

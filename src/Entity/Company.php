@@ -50,11 +50,11 @@ class Company
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['company:read'])]
+    #[Groups(['company:read', 'order:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['company:read', 'company:create', 'company:update'])]
+    #[Groups(['company:read', 'company:create', 'company:update', 'order:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]

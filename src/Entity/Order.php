@@ -3,14 +3,40 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Put;
 use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
-    normalizationContext: ['groups' => ['order:read', 'company:read', 'client:read']],
-    denormalizationContext: ['groups' => ['order:write', 'company:read', 'client:read']],
+    operations: [
+        new GetCollection(
+            normalizationContext: ['groups' => ['order:read']],
+            denormalizationContext: ['groups' => ['order:write']]
+        ),
+        new Get(
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['order:read']],
+            denormalizationContext: ['groups' => ['order:read']],
+        ),
+        new Put(
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['order:write']],
+            denormalizationContext: ['groups' => ['order:write']],
+        ),
+        new Patch(
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['order:write']],
+            denormalizationContext: ['groups' => ['order:write']],
+        ),
+        new Delete(),
+    ]
 )]
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
@@ -19,15 +45,15 @@ class Order
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['order:read', 'order:write', 'company:read', 'client:read'])]
+    #[Groups(['order:read', 'order:write'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(['order:read', 'order:write', 'company:read', 'client:read'])]
+    #[Groups(['order:read', 'order:write'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['order:read', 'order:write', 'company:read', 'client:read'])]
+    #[Groups(['order:read', 'order:write'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
@@ -44,7 +70,7 @@ class Order
      * @var Collection<int, OrderStep>
      */
     #[ORM\OneToMany(targetEntity: OrderStep::class, mappedBy: '_order', orphanRemoval: true)]
-    #[Groups(['order:read', 'order:write', 'company:read', 'client:read'])]
+    #[Groups(['order:read', 'order:write'])]
     private Collection $orderSteps;
 
     public function __construct()
