@@ -8,39 +8,49 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
-class Address
+class Address implements CompanyAwareInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['order:read', 'order:write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $street = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $city = null;
 
     #[ORM\Column(length: 20)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $zipCode = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $stateProvince = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $country = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6, nullable: true)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $latitude = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6, nullable: true)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $longitude = null;
 
     #[ORM\ManyToOne(inversedBy: 'addresses')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order:read', 'order:write'])]
     private ?Company $company = null;
 
     /**

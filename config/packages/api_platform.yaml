@@ -9,6 +9,10 @@ api_platform:
         html: ['text/html']
     defaults:
         stateless: false
+        pagination_client_items_per_page: true
+        collection:
+            pagination:
+                items_per_page_parameter_name: itemsPerPage # Default value
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
         extra_properties:

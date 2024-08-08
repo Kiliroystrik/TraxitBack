@@ -7,6 +7,7 @@ use App\Repository\FuelTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: FuelTypeRepository::class)]
@@ -15,15 +16,18 @@ class FuelType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['order:read', 'order:write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $name = null;
 
     /**
      * @var Collection<int, Vehicle>
      */
     #[ORM\ManyToMany(targetEntity: Vehicle::class, mappedBy: 'fuelTypes')]
+    #[Groups(['order:read', 'order:write'])]
     private Collection $vehicles;
 
     public function __construct()

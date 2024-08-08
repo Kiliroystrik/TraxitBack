@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\OrderStepRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: OrderStepRepository::class)]
@@ -14,55 +15,93 @@ class OrderStep
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['order:read', 'order:write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $type = null;
 
+    #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['order:read', 'order:write'])]
+    private ?int $position = null;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Groups(['order:read', 'order:write'])]
     private ?string $quantity = null;
 
     #[ORM\Column]
+    #[Groups(['order:read', 'order:write'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['order:read', 'order:write'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['order:read', 'order:write'])]
     private ?\DateTimeImmutable $scheduledArrival = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['order:read', 'order:write'])]
     private ?\DateTimeImmutable $scheduledDeparture = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order:read', 'order:write'])]
     private ?Address $address = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
+    // #[Groups(['order:read', 'order:write'])]
     private ?Order $_order = null;
 
     #[ORM\OneToOne(inversedBy: 'orderStep', cascade: ['persist', 'remove'])]
+    #[Groups(['order:read', 'order:write'])]
     private ?TourStep $tourStep = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order:read', 'order:write'])]
     private ?Status $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order:read', 'order:write'])]
     private ?Product $product = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order:read', 'order:write'])]
     private ?Unit $unit = null;
+
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): static
+    {
+        $this->position = $position;
+
+        return $this;
     }
 
     public function getType(): ?string
@@ -89,12 +128,12 @@ class OrderStep
         return $this;
     }
 
-    public function getQuantity(): ?string
+    public function getQuantity(): ?float
     {
         return $this->quantity;
     }
 
-    public function setQuantity(string $quantity): static
+    public function setQuantity(float $quantity): static
     {
         $this->quantity = $quantity;
 

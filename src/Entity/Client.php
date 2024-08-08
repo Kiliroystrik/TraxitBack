@@ -38,7 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ]
 )]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
-class Client
+class Client implements CompanyAwareInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
