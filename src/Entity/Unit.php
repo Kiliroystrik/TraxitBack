@@ -16,11 +16,11 @@ class Unit
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 20)]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?string $name = null;
 
     /**

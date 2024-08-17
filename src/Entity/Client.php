@@ -31,8 +31,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['client:create']],
         ),
         new Patch(
-            normalizationContext: ['groups' => ['client:update']],
-            denormalizationContext: ['groups' => ['client:update']],
+            normalizationContext: ['groups' => ['order:update_client']],
+            denormalizationContext: ['groups' => ['order:update_client']],
         ),
         new Delete(),
     ]
@@ -43,7 +43,7 @@ class Client implements CompanyAwareInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['client:read', 'order:read'])]
+    #[Groups(['client:read', 'order:read', 'order:update_client'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
