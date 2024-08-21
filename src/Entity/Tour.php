@@ -2,31 +2,84 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\TourRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
-#[ApiResource]
+#[ApiFilter(OrderFilter::class, properties: ['id', 'createdAt', 'updatedAt'])]
+#[ApiFilter(DateFilter::class, properties: ['createdAt', 'updatedAt'])]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            security: "is_granted('VIEW', object)",
+            normalizationContext: ['groups' => ['tour:read']],
+            denormalizationContext: ['groups' => ['tour:read']],
+        ),
+        new Get(
+            security: "is_granted('VIEW', object)",
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['tour:read']],
+            denormalizationContext: ['groups' => ['tour:read']],
+        ),
+        new Post(
+            normalizationContext: ['groups' => ['tour:write']],
+            denormalizationContext: ['groups' => ['tour:write']],
+        ),
+        new Put(
+            security: "is_granted('EDIT', object)",
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['tour:write']],
+            denormalizationContext: ['groups' => ['tour:write']],
+        ),
+        new Patch(
+            security: "is_granted('EDIT', object)",
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['tour:write']],
+            denormalizationContext: ['groups' => ['tour:write']],
+        ),
+        new Delete(
+            security: "is_granted('DELETE', object)",
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['tour:write']],
+            denormalizationContext: ['groups' => ['tour:write']],
+        )
+    ]
+)]
 #[ORM\Entity(repositoryClass: TourRepository::class)]
 class Tour implements CompanyAwareInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['tour:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['tour:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['tour:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['tour:read', 'tour:write'])]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['tour:read', 'tour:write'])]
     private ?\DateTimeImmutable $endDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'tours')]
@@ -37,18 +90,21 @@ class Tour implements CompanyAwareInterface
      * @var Collection<int, TourStep>
      */
     #[ORM\OneToMany(targetEntity: TourStep::class, mappedBy: 'tour', orphanRemoval: true)]
+    #[Groups(['tour:read'])]
     private Collection $tourSteps;
 
     /**
      * @var Collection<int, DriverAssignment>
      */
     #[ORM\OneToMany(targetEntity: DriverAssignment::class, mappedBy: 'tour', orphanRemoval: true)]
+    #[Groups(['tour:read'])]
     private Collection $driverAssignments;
 
     /**
      * @var Collection<int, VehicleAssignment>
      */
     #[ORM\OneToMany(targetEntity: VehicleAssignment::class, mappedBy: 'tour', orphanRemoval: true)]
+    #[Groups(['tour:read'])]
     private Collection $vehicleAssignment;
 
     public function __construct()
@@ -56,6 +112,9 @@ class Tour implements CompanyAwareInterface
         $this->tourSteps = new ArrayCollection();
         $this->driverAssignments = new ArrayCollection();
         $this->vehicleAssignment = new ArrayCollection();
+
+        $this->setCreatedAt(new \DateTimeImmutable());
+        $this->setUpdatedAt(new \DateTimeImmutable());
     }
 
     public function getId(): ?int

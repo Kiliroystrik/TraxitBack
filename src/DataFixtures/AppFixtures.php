@@ -186,7 +186,8 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 50; $i++) {
             $tour = new Tour();
             $tour->setCompany($company);
-            $tour->setCreatedAt(new \DateTimeImmutable());
+            $tour->setStartDate(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-1 years', '+1 years')));
+            $tour->setEndDate(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('+1 years', '+2 years')));
             $manager->persist($tour);
             $tours[] = $tour;
         }
