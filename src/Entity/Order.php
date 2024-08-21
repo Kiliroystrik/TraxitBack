@@ -23,30 +23,37 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(
+            security: "is_granted('VIEW', object)",
             normalizationContext: ['groups' => ['order:read']],
             denormalizationContext: ['groups' => ['order:write']],
         ),
         new Get(
+            security: "is_granted('VIEW', object)",
             requirements: ['id' => '\d+'],
             normalizationContext: ['groups' => ['order:read']],
             denormalizationContext: ['groups' => ['order:read']],
         ),
         new Post(
+            securityPostDenormalize: "is_granted('CREATE', object)",
             requirements: ['id' => '\d+'],
             normalizationContext: ['groups' => ['order:write']],
             denormalizationContext: ['groups' => ['order:write']],
         ),
         new Put(
+            security: "is_granted('EDIT', object)",
             requirements: ['id' => '\d+'],
             normalizationContext: ['groups' => ['order:write']],
             denormalizationContext: ['groups' => ['order:write']],
         ),
         new Patch(
+            security: "is_granted('EDIT', object)",
             requirements: ['id' => '\d+'],
             normalizationContext: ['groups' => ['order:write']],
             denormalizationContext: ['groups' => ['order:write']],
         ),
-        new Delete(),
+        new Delete(
+            security: "is_granted('DELETE', object)",
+        ),
     ]
 )]
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
@@ -85,7 +92,7 @@ class Order implements CompanyAwareInterface
      * @var Collection<int, OrderStep>
      */
     #[ORM\OneToMany(targetEntity: OrderStep::class, mappedBy: '_order', orphanRemoval: true, cascade: ['persist', 'remove'])]
-    #[Groups(['order:read', 'order:write'])]
+    // #[Groups(['order:read', 'order:write'])]
     private Collection $orderSteps;
 
     public function __construct()
