@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\OrderStepRepository;
+use App\State\OrderStepPostProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -44,6 +45,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Post(
             requirements: ['id' => '\d+'],
+            uriTemplate: '/orders/{id}/order_steps',
+            uriVariables: [
+                'id' => new Link(
+                    fromClass: Order::class,
+                    fromProperty: 'orderSteps',
+                )
+            ],
+            processor: OrderStepPostProcessor::class,
             normalizationContext: ['groups' => ['orderStep:write']],
             denormalizationContext: ['groups' => ['orderStep:write']],
         ),
