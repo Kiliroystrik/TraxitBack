@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: VehicleRepository::class)]
-class Vehicle
+class Vehicle implements CompanyAwareInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

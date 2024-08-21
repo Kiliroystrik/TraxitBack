@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: DriverRepository::class)]
-class Driver extends User
+class Driver extends User implements CompanyAwareInterface
 {
 
     #[ORM\Column(length: 50, nullable: true)]

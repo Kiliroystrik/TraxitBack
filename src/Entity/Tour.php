@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: TourRepository::class)]
-class Tour
+class Tour implements CompanyAwareInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

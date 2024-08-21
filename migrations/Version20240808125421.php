@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240603075836 extends AbstractMigration
+final class Version20240808125421 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -69,12 +69,12 @@ final class Version20240603075836 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN driving_segment.start_date IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('COMMENT ON COLUMN driving_segment.end_date IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('CREATE TABLE fuel_type (id INT NOT NULL, name VARCHAR(100) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE TABLE "order" (id INT NOT NULL, company_id INT NOT NULL, client_id INT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE "order" (id INT NOT NULL, company_id INT NOT NULL, client_id INT NOT NULL, serial_number VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_F5299398979B1AD6 ON "order" (company_id)');
         $this->addSql('CREATE INDEX IDX_F529939819EB6921 ON "order" (client_id)');
         $this->addSql('COMMENT ON COLUMN "order".created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('COMMENT ON COLUMN "order".updated_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('CREATE TABLE order_step (id INT NOT NULL, address_id INT NOT NULL, _order_id INT NOT NULL, tour_step_id INT DEFAULT NULL, status_id INT NOT NULL, product_id INT NOT NULL, unit_id INT NOT NULL, type VARCHAR(50) NOT NULL, description TEXT DEFAULT NULL, quantity NUMERIC(10, 2) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, scheduled_arrival TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, scheduled_departure TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE order_step (id INT NOT NULL, address_id INT NOT NULL, _order_id INT NOT NULL, tour_step_id INT DEFAULT NULL, status_id INT NOT NULL, product_id INT NOT NULL, unit_id INT NOT NULL, type VARCHAR(50) NOT NULL, position INT NOT NULL, description TEXT DEFAULT NULL, quantity NUMERIC(10, 2) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, scheduled_arrival TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, scheduled_departure TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_E48C42BF5B7AF75 ON order_step (address_id)');
         $this->addSql('CREATE INDEX IDX_E48C42BA35F2858 ON order_step (_order_id)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_E48C42B33589B1D ON order_step (tour_step_id)');

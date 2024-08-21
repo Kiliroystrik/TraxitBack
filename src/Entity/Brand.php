@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: BrandRepository::class)]
-class Brand
+class Brand implements CompanyAwareInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

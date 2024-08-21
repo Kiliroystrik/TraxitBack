@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity(repositoryClass: ServiceTypeRepository::class)]
-class ServiceType
+class ServiceType implements CompanyAwareInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

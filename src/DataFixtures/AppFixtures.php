@@ -2,161 +2,209 @@
 
 namespace App\DataFixtures;
 
-use App\Factory\AddressFactory;
-use App\Factory\BrandFactory;
-use App\Factory\ClientFactory;
-use App\Factory\CompanyFactory;
-use App\Factory\DriverFactory;
-use App\Factory\FuelTypeFactory;
-use App\Factory\OrderFactory;
-use App\Factory\OrderStepFactory;
-use App\Factory\StatusFactory;
-use App\Factory\TourFactory;
-use App\Factory\TourStepFactory;
-use App\Factory\UserFactory;
-use App\Factory\VehicleFactory;
-use App\Factory\VehicleModelFactory;
+use App\Entity\Address;
+use App\Entity\Brand;
+use App\Entity\Client;
+use App\Entity\Company;
+use App\Entity\Driver;
+use App\Entity\FuelType;
+use App\Entity\Order;
+use App\Entity\OrderStep;
+use App\Entity\Product;
+use App\Entity\Status;
+use App\Entity\Tour;
+use App\Entity\TourStep;
+use App\Entity\Unit;
+use App\Entity\User;
+use App\Entity\Vehicle;
+use App\Entity\VehicleModel;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory as FakerFactory;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    public function __construct(private UserPasswordHasherInterface $passwordHasher) {}
     public function load(ObjectManager $manager): void
     {
-        // Dans un premier temps, on crée une seule compagnie
-        $company = CompanyFactory::createOne();
+        $faker = FakerFactory::create('fr_FR');
 
-        // Puis on crée un seul utilisateur pour cette compagnie
-        $user = UserFactory::createOne(
-            [
-                'company' => $company,
-            ]
-        );
+        // Créer une compagnie
+        $company = new Company();
+        $company->setName($faker->company());
+        $company->setEmail($faker->companyEmail());
+        $company->setPhone($faker->phoneNumber());
+        $company->setCreatedAt(new \DateTimeImmutable());
+        $manager->persist($company);
 
-        // On crée une première adresse pour la compagnie
-        $address = AddressFactory::createOne(
-            [
-                'company' => $company,
-            ]
-        );
+        // Créer un utilisateur pour cette compagnie
+        $user = new User();
+        $user->setCompany($company);
+        $user->setRoles(['ROLE_ADMIN']);
+        $user->setEmail('borges.mathieu@gmail.com');
+        $password = $this->passwordHasher->hashPassword($user, 'password');
+        $user->setPassword($password);
+        $user->setFirstname($faker->firstName());
+        $user->setLastname($faker->lastName());
+        $user->setCreatedAt(new \DateTimeImmutable());
+        $manager->persist($user);
 
-        // On crée les types de fuel pour les vehicules
-        // tableau des types de carburant existants
-        $fuelTypes = [
-            'Essence',
-            'Diesel',
-            'GPL',
-            'Electrique',
-            'Hybride',
-        ];
+        // Créer une adresse pour la compagnie
+        $address = new Address();
+        $address->setCompany($company);
+        $address->setStreet($faker->streetAddress());
+        $address->setCity($faker->city());
+        $address->setZipCode($faker->postcode());
+        $address->setStateProvince($faker->country());
+        $address->setCountry($faker->country());
+        $manager->persist($address);
 
-        $fuelTypesFixtures = [];
-
-        // pour chaque type de carburant, on crée un nouveau type de carburant
-        foreach ($fuelTypes as $fuelType) {
-            $fuelFixture = FuelTypeFactory::createOne(
-                [
-                    'name' => $fuelType,
-                ]
-            );
-
-            // on stocke le type de carburant dans le tableau des types de carburant existants
-            $fuelTypesFixtures[] = $fuelFixture;
-        };
-
-        // On crée plusieurs marques de véhicules pour notre compagnie
-        $truckBrands = [
-            'Volvo', 'Scania', 'Mercedes-Benz', 'MAN', 'DAF', 'Iveco', 'Renault Trucks', 'Freightliner', 'Peterbilt', 'Kenworth', 'Mack', 'Western Star'
-        ];
-
-        foreach ($truckBrands as $truckBrand) {
-            BrandFactory::createOne(
-                [
-                    'name' => $truckBrand,
-                    'company' => $company,
-                ]
-            );
+        // Créer les types de carburant
+        $fuelTypes = ['Essence', 'Diesel', 'GPL', 'Electrique', 'Hybride'];
+        foreach ($fuelTypes as $fuelTypeName) {
+            $fuelType = new FuelType();
+            $fuelType->setName($fuelTypeName);
+            $manager->persist($fuelType);
         }
 
-        // On crée plusieurs modeles de véhicules pour notre compagnie
-        $truckModels = [
-            'Volvo', 'Scania', 'Mercedes-Benz', 'MAN', 'DAF', 'Iveco', 'Renault', 'Freightliner', 'Peterbilt', 'Kenworth', 'Mack', 'Western Star'
-        ];
-
-        $truckModelsfixtures = [];
-
-        foreach ($truckModels as $truckModel) {
-            $modelFixture = VehicleModelFactory::createOne(
-                [
-                    'name' => $truckModel,
-                ]
-            );
-
-            $truckModelsfixtures[] = $modelFixture;
+        // Créer des marques de véhicules
+        $truckBrands = ['Volvo', 'Scania', 'Mercedes-Benz', 'MAN', 'DAF', 'Iveco', 'Renault Trucks', 'Freightliner', 'Peterbilt', 'Kenworth', 'Mack', 'Western Star'];
+        // Tableau de marques de véhicules
+        $brands = [];
+        foreach ($truckBrands as $truckBrandName) {
+            $brand = new Brand();
+            $brand->setName($truckBrandName);
+            $brand->setCompany($company);
+            $brands[] = $brand;
+            $manager->persist($brand);
         }
 
-        // On créer 50 vehicules
-        VehicleFactory::createMany(50, [
-            'company' => $company,
-        ]);
-
-        // On créer des clients
-        ClientFactory::createMany(50, [
-            'company' => $company,
-        ]);
-
-        // On crée des conducteurs
-        DriverFactory::createMany(50, [
-            'company' => $company,
-        ]);
-
-        // On crée des status de commandes
-        $statuses = [
-            'Planifié',
-            'En cours de livraison',
-            'Livré',
-            'Annulé',
-            'Échoué',
-        ];
-
-        foreach ($statuses as $status) {
-            StatusFactory::createOne(
-                [
-                    'name' => $status,
-                ]
-            );
+        // Créer des modèles de véhicules
+        $truckModels = ['Volvo', 'Scania', 'Mercedes-Benz', 'MAN', 'DAF', 'Iveco', 'Renault', 'Freightliner', 'Peterbilt', 'Kenworth', 'Mack', 'Western Star'];
+        foreach ($truckModels as $truckModelName) {
+            $model = new VehicleModel();
+            $model->setName($truckModelName);
+            $model->setBrand($brands[array_rand($brands)]);
+            $manager->persist($model);
         }
 
-        // On crée des unités de mesures pour les produits
-        $units = [
-            'Kilogramme',
-            'Litre',
-        ];
+        // Créer des véhicules
+        for ($i = 0; $i < 50; $i++) {
+            $vehicle = new Vehicle();
+            $vehicle->setCompany($company);
+            $vehicle->setModel($model); // Utiliser le dernier modèle créé comme exemple
+            $vehicle->setRegistrationNumber($faker->regexify('[A-Z]{2}-[0-9]{3}-[A-Z]{2}'));
+            $vehicle->setMileage($faker->randomFloat(2, 0, 100000));
+            $vehicle->setIsAvailable($faker->boolean());
+            $vehicle->setRegisteredAt(new \DateTimeImmutable());
+            $manager->persist($vehicle);
+        }
 
-        // On crée des commandes
-        OrderFactory::createMany(50, [
-            'company' => $company,
-        ]);
+        // Créer des clients
+        $clients = [];
+        for ($i = 0; $i < 50; $i++) {
+            $client = new Client();
+            $client->setCompany($company);
+            $client->setAddress($address); // Utiliser la première adresse créée comme exemple
+            $client->setName($faker->name());
+            $client->setEmail($faker->email());
+            $client->setPhone($faker->phoneNumber());
+            $client->setCreatedAt(new \DateTimeImmutable());
+            $manager->persist($client);
+            $clients[] = $client;
+        }
 
-        // On crée des détails de commandes
-        $orderSteps = OrderStepFactory::createMany(50);
+        // Créer des conducteurs
+        for ($i = 0; $i < 50; $i++) {
+            $driver = new Driver();
+            $driver->setCompany($company);
+            $driver->setEmail($faker->email());
+            $driver->setRoles(['ROLE_DRIVER']);
+            $driver->setFirstname($faker->firstName());
+            $driver->setLastname($faker->lastName());
+            $driver->setPassword($this->passwordHasher->hashPassword($driver, 'password'));
+            $driver->setLicenceNumber($faker->regexify('[A-Z]{2}-[0-9]{6}'));
+            $driver->setLicenceExpiration(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('+1 years', '+5 years')));
+            $driver->setIsAvailable($faker->boolean());
+            $driver->setCreatedAt(new \DateTimeImmutable());
+            $manager->persist($driver);
+        }
 
-        $tours = TourFactory::createMany(50, [
-            'company' => $company,
-        ]);
+        // Créer des statuts de commandes
+        $statuses = ['Planifié', 'En cours de livraison', 'Livré', 'Annulé', 'Échoué'];
+        foreach ($statuses as $statusName) {
+            $status = new Status();
+            $status->setName($statusName);
+            $status->setCompany($company);
+            $manager->persist($status);
+        }
 
-        // On crée des steps de tour
-        // Création des steps pour chaque tour
-        foreach ($tours as $tour) {
-            // Créer 10 steps pour chaque tour avec un stepNumber incrémenté
-            for ($i = 0; $i < 10; $i++) {
-                TourStepFactory::createOne([
-                    'tour' => $tour,
-                    'stepNumber' => $i, // Incrémente après avoir utilisé la valeur
-                    'tour' => $tour,
-                    'orderStep' => $orderSteps[array_rand($orderSteps)],
-                ]);
+        // Créer des unités de mesure
+        $units = ['Kilogramme', 'Litre'];
+        foreach ($units as $unitName) {
+            $unit = new Unit();
+            $unit->setName($unitName);
+            $manager->persist($unit);
+        }
+
+        // Créer des produits (ajouté car utilisé dans OrderStep)
+        $product = new Product();
+        $product->setName($faker->word());
+        $product->setDescription($faker->sentence());
+        $manager->persist($product);
+
+        // Créer des commandes
+        for ($i = 0; $i < 50; $i++) {
+            $order = new Order();
+            $order->setCompany($company);
+            $order->setClient($clients[array_rand($clients)]);
+            $order->setCreatedAt(new \DateTimeImmutable());
+            $manager->persist($order);
+
+            // Créer des étapes de commandes
+            for ($j = 0; $j < 5; $j++) {
+                $orderStep = new OrderStep();
+                $orderStep->setOrder($order);
+                $orderStep->setAddress($address);
+                $orderStep->setStatus($status); // Utiliser le dernier statut créé comme exemple
+                $orderStep->setProduct($product);
+                $orderStep->setUnit($unit); // Utiliser la dernière unité créée comme exemple
+                $orderStep->setType($faker->word());
+                $orderStep->setPosition($j);
+                $orderStep->setDescription($faker->sentence());
+                $orderStep->setQuantity($faker->randomFloat(2, 1, 100));
+                $orderStep->setCreatedAt(new \DateTimeImmutable());
+                $orderStep->setScheduledArrival(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('+1 days', '+1 weeks')));
+                $orderStep->setScheduledDeparture(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('+1 weeks', '+2 weeks')));
+                $manager->persist($orderStep);
             }
         }
+
+        // Créer des tournées
+        $tours = [];
+        for ($i = 0; $i < 50; $i++) {
+            $tour = new Tour();
+            $tour->setCompany($company);
+            $tour->setCreatedAt(new \DateTimeImmutable());
+            $manager->persist($tour);
+            $tours[] = $tour;
+        }
+
+        // Créer des étapes de tournées
+        foreach ($tours as $tour) {
+            for ($i = 0; $i < 10; $i++) {
+                $tourStep = new TourStep();
+                $tourStep->setTour($tour);
+                $tourStep->setStepNumber($i);
+                $tourStep->setOrderStep($orderStep); // Utiliser le dernier orderStep créé comme exemple
+                $tourStep->setCreatedAt(new \DateTimeImmutable());
+                $tourStep->setActualArrival(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('+1 days', '+1 weeks')));
+                $tourStep->setActualDeparture(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('+1 weeks', '+2 weeks')));
+                $manager->persist($tourStep);
+            }
+        }
+
+        $manager->flush();
     }
 }

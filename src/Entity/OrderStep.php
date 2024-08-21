@@ -2,67 +2,166 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\OrderStepRepository;
+use App\State\OrderStepPostProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource]
+#[ApiFilter(OrderFilter::class, properties: ['position' => 'ASC'])]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            normalizationContext: ['groups' => ['orderStep:read']],
+            denormalizationContext: ['groups' => ['orderStep:write']],
+        ),
+        new GetCollection(
+            requirements: ['id' => '\d+'],
+            uriTemplate: '/orders/{id}/order_steps',
+            uriVariables: [
+                'id' => new Link(
+                    fromClass: Order::class,
+                    fromProperty: 'orderSteps',
+                )
+            ],
+            order: ['position' => 'ASC'],
+            normalizationContext: ['groups' => ['orderStep:read']],
+            denormalizationContext: ['groups' => ['orderStep:read']],
+        ),
+        new Get(
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['orderStep:read']],
+            denormalizationContext: ['groups' => ['orderStep:read']],
+        ),
+        new Post(
+            requirements: ['id' => '\d+'],
+            uriTemplate: '/orders/{id}/order_steps',
+            uriVariables: [
+                'id' => new Link(
+                    fromClass: Order::class,
+                    fromProperty: 'orderSteps',
+                )
+            ],
+            processor: OrderStepPostProcessor::class,
+            normalizationContext: ['groups' => ['orderStep:write']],
+            denormalizationContext: ['groups' => ['orderStep:write']],
+        ),
+        new Put(
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['orderStep:write']],
+            denormalizationContext: ['groups' => ['orderStep:write']],
+        ),
+        new Patch(
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['orderStep:write']],
+            denormalizationContext: ['groups' => ['orderStep:write']],
+        ),
+        new Delete(),
+    ]
+)]
 #[ORM\Entity(repositoryClass: OrderStepRepository::class)]
 class OrderStep
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?string $type = null;
 
+    #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    private ?int $position = null;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?string $quantity = null;
 
     #[ORM\Column]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?\DateTimeImmutable $scheduledArrival = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?\DateTimeImmutable $scheduledDeparture = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?Address $address = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['orderStep:read', 'orderStep:write'])]
     private ?Order $_order = null;
 
     #[ORM\OneToOne(inversedBy: 'orderStep', cascade: ['persist', 'remove'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?TourStep $tourStep = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?Status $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?Product $product = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
     private ?Unit $unit = null;
+
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): static
+    {
+        $this->position = $position;
+
+        return $this;
     }
 
     public function getType(): ?string
@@ -100,6 +199,7 @@ class OrderStep
 
         return $this;
     }
+
 
 
     public function getCreatedAt(): ?\DateTimeImmutable

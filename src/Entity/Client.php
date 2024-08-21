@@ -3,40 +3,76 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            normalizationContext: ['groups' => ['client:read']],
+            denormalizationContext: ['groups' => ['client:read']],
+        ),
+        new Get(
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['client:read']],
+            denormalizationContext: ['groups' => ['client:read']],
+        ),
+        new Post(
+            normalizationContext: ['groups' => ['client:create']],
+            denormalizationContext: ['groups' => ['client:create']],
+        ),
+        new Patch(
+            normalizationContext: ['groups' => ['order:update_client']],
+            denormalizationContext: ['groups' => ['order:update_client']],
+        ),
+        new Delete(),
+    ]
+)]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
-class Client
+class Client implements CompanyAwareInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['client:read', 'order:read', 'order:update_client'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['client:read', 'client:create', 'client:update', 'order:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['client:read', 'client:create', 'client:update', 'order:read'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 20, nullable: true)]
+    #[Groups(['client:read', 'client:create', 'client:update', 'order:read'])]
     private ?string $phone = null;
 
     #[ORM\Column]
+    #[Groups(['client:read', 'client:create', 'client:update', 'order:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['client:read', 'client:create', 'client:update', 'order:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'clients')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['client:read', 'client:create', 'client:update', 'order:read'])]
     private ?Company $company = null;
 
     #[ORM\ManyToOne(inversedBy: 'clients')]
+    #[Groups(['client:read', 'client:create', 'client:update', 'order:read'])]
     private ?Address $address = null;
 
     /**
