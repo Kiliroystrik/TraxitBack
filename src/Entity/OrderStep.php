@@ -75,68 +75,68 @@ class OrderStep
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?string $type = null;
 
     #[ORM\Column(type: Types::INTEGER)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?int $position = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?string $quantity = null;
 
     #[ORM\Column]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?\DateTimeImmutable $scheduledArrival = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?\DateTimeImmutable $scheduledDeparture = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?Address $address = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['orderStep:read', 'orderStep:write'])]
+    #[Groups(['orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?Order $_order = null;
 
     #[ORM\OneToOne(inversedBy: 'orderStep', cascade: ['persist', 'remove'])]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write',])]
     private ?TourStep $tourStep = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?Status $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?Product $product = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?Unit $unit = null;
 
 

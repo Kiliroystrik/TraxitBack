@@ -21,31 +21,31 @@ class Address implements CompanyAwareInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?string $street = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'tourStep:read'])]
     private ?string $city = null;
 
     #[ORM\Column(length: 20)]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'tourStep:read'])]
     private ?string $zipCode = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'tourStep:read'])]
     private ?string $stateProvince = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'tourStep:read'])]
     private ?string $country = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6, nullable: true)]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'tourStep:read'])]
     private ?string $latitude = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6, nullable: true)]
-    #[Groups(['order:read', 'order:write'])]
+    #[Groups(['order:read', 'order:write', 'tourStep:read'])]
     private ?string $longitude = null;
 
     #[ORM\ManyToOne(inversedBy: 'addresses')]

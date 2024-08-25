@@ -5,39 +5,79 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\TourStepRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use Symfony\Component\Serializer\Attribute\Groups;
 
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            requirements: ['id' => '\d+'],
+            uriTemplate: '/tours/{id}/tour_steps',
+            uriVariables: [
+                'id' => new Link(
+                    fromClass: Tour::class,
+                    fromProperty: 'tourSteps',
+                )
+            ],
+            normalizationContext: ['groups' => ['tourStep:read']],
+            denormalizationContext: ['groups' => ['tourStep:read']],
+        ),
+        new Get(),
+        new Post(),
+        new Put(),
+        new Patch(),
+        new Delete(),
+    ]
+)]
 #[ORM\Entity(repositoryClass: TourStepRepository::class)]
 class TourStep
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['tourStep:read'])]
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['tourStep:read'])]
     private ?\DateTimeImmutable $actualDate = null;
 
     #[ORM\Column]
+    #[Groups(['tourStep:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['tourStep:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['tourStep:read'])]
     private ?\DateTimeImmutable $actualArrival = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['tourStep:read'])]
     private ?\DateTimeImmutable $actualDeparture = null;
 
     #[ORM\Column]
+    #[Groups(['tourStep:read'])]
     private ?int $stepNumber = null;
 
     #[ORM\OneToOne(mappedBy: 'tourStep', cascade: ['persist', 'remove'])]
+    #[Groups(['tourStep:read'])]
     private ?OrderStep $orderStep = null;
 
     #[ORM\ManyToOne(inversedBy: 'tourSteps')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['tourStep:read'])]
     private ?Tour $tour = null;
 
     public function getId(): ?int
