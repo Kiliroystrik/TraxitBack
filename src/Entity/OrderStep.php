@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Controller\OrderStepController;
 use App\Repository\OrderStepRepository;
 use App\State\OrderStepPostProcessor;
 use Doctrine\DBAL\Types\Types;
@@ -43,25 +44,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             normalizationContext: ['groups' => ['orderStep:read']],
             denormalizationContext: ['groups' => ['orderStep:read']],
         ),
-        new Post(
-            requirements: ['id' => '\d+'],
-            uriTemplate: '/orders/{id}/order_steps',
-            uriVariables: [
-                'id' => new Link(
-                    fromClass: Order::class,
-                    fromProperty: 'orderSteps',
-                )
-            ],
-            processor: OrderStepPostProcessor::class,
-            normalizationContext: ['groups' => ['orderStep:write']],
-            denormalizationContext: ['groups' => ['orderStep:write']],
-        ),
         new Put(
-            requirements: ['id' => '\d+'],
-            normalizationContext: ['groups' => ['orderStep:write']],
-            denormalizationContext: ['groups' => ['orderStep:write']],
-        ),
-        new Patch(
             requirements: ['id' => '\d+'],
             normalizationContext: ['groups' => ['orderStep:write']],
             denormalizationContext: ['groups' => ['orderStep:write']],
@@ -110,9 +93,9 @@ class OrderStep
     #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
     private ?\DateTimeImmutable $scheduledDeparture = null;
 
-    #[ORM\ManyToOne(inversedBy: 'orderSteps')]
+    #[ORM\ManyToOne(inversedBy: 'orderSteps', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'tourStep:read'])]
     private ?Address $address = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderSteps')]

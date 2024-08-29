@@ -20,6 +20,7 @@ class OrderStepPostProcessor implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
+        dd("ici");
         // Ensure that the data is an instance of OrderStep
         if (!$data instanceof OrderStep) {
             throw new \InvalidArgumentException('Expected instance of OrderStep');
@@ -39,6 +40,7 @@ class OrderStepPostProcessor implements ProcessorInterface
 
         // Associate the Order with the OrderStep
         $data->setOrder($order);
+
 
         // Handle persistence (save the OrderStep)
         $this->entityManager->persist($data);

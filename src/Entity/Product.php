@@ -17,11 +17,11 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]

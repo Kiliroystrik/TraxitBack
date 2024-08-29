@@ -17,35 +17,35 @@ class Address implements CompanyAwareInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read'])]
+    #[Groups(['order:read', 'order:write', 'orderStep:read', 'orderStep:write', 'tourStep:read', 'orderStep:write'])]
     private ?string $street = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['order:read', 'order:write', 'tourStep:read'])]
+    #[Groups(['order:read', 'order:write', 'tourStep:read', 'orderStep:write'])]
     private ?string $city = null;
 
     #[ORM\Column(length: 20)]
-    #[Groups(['order:read', 'order:write', 'tourStep:read'])]
+    #[Groups(['order:read', 'order:write', 'tourStep:read', 'orderStep:write'])]
     private ?string $zipCode = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['order:read', 'order:write', 'tourStep:read'])]
+    #[Groups(['order:read', 'order:write', 'tourStep:read', 'orderStep:write'])]
     private ?string $stateProvince = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['order:read', 'order:write', 'tourStep:read'])]
+    #[Groups(['order:read', 'order:write', 'tourStep:read', 'orderStep:write'])]
     private ?string $country = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6, nullable: true)]
-    #[Groups(['order:read', 'order:write', 'tourStep:read'])]
+    #[Groups(['order:read', 'order:write', 'tourStep:read', 'orderStep:write'])]
     private ?string $latitude = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 9, scale: 6, nullable: true)]
-    #[Groups(['order:read', 'order:write', 'tourStep:read'])]
+    #[Groups(['order:read', 'order:write', 'tourStep:read', 'orderStep:write'])]
     private ?string $longitude = null;
 
     #[ORM\ManyToOne(inversedBy: 'addresses')]
